@@ -1,0 +1,87 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum ListingStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id                 String   @id @default(uuid())
+  name               String
+  email              String   @unique
+  phone              String
+  password           String
+  role               Role     @default(BUYER)
+  status             String   @default("ACTIVE")
+  designation        String?
+  profilePhoto       String?
+  emailNotifications Boolean  @default(true)
+  pushNotifications  Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  company            Company?
+  listings           Listing[]
+}
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  gstNumber   String
+  panNumber   String
+  address     String
+  website     String?
+  description String?
+  status      String   @default("ACTIVE")
+  ownerId     String   @unique
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  listings    Listing[]
+}
+
+model Listing {
+  id          String         @id @default(uuid())
+  title       String
+  description String
+  quantity    Float
+  unit        String
+  price       Float
+  location    String
+  status      ListingStatus  @default(PENDING)
+  sellerId    String
+  seller      User           @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  images      ListingImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model ListingImage {
+  id        String   @id @default(uuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  createdAt DateTime @default(now())
+}
