@@ -1,0 +1,84 @@
+name: Continuous Deployment (CD)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false
+
+jobs:
+  pre-flight:
+    name: Pre-Flight Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify Deployment Manifests
+        run: |
+          echo "Verifying Dockerfiles, Render Blueprints, and deployment configs..."
+          test -f backend/Dockerfile || { echo "Missing backend/Dockerfile"; exit 1; }
+          test -f frontend/Dockerfile || { echo "Missing frontend/Dockerfile"; exit 1; }
+          test -f docker-compose.yml || { echo "Missing docker-compose.yml"; exit 1; }
+          echo "All deployment manifests verified."
+
+  deploy-render:
+    name: Deploy to Render (via Deploy Hooks)
+    needs: [pre-flight]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Backend Deploy
+        if: "${{ env.RENDER_BACKEND_HOOK != '' }}"
+        env:
+          RENDER_BACKEND_HOOK: ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering Render Backend Webhook..."
+          curl -sS -X POST "$RENDER_BACKEND_HOOK"
+
+      - name: Trigger Frontend Deploy
+        if: "${{ env.RENDER_FRONTEND_HOOK != '' }}"
+        env:
+          RENDER_FRONTEND_HOOK: ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering Render Frontend Webhook..."
+          curl -sS -X POST "$RENDER_FRONTEND_HOOK"
+
+      - name: Fallback Notification
+        if: "${{ env.RENDER_BACKEND_HOOK == '' && env.RENDER_FRONTEND_HOOK == '' }}"
+        run: |
+          echo "No RENDER_*_DEPLOY_HOOK secrets configured."
+          echo "Repository is connected via GitHub Webhook on Render or ready for automated deployment."
+
+  build-containers:
+    name: Container Build Verification
+    needs: [pre-flight]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Container
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: false
+          tags: brokering-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Frontend Container
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: false
+          tags: brokering-frontend:latest
+          build-args: |
+            NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsString, IsOptional, IsUrl, Matches } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsUrl,
+  Matches,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CompanyDto {
@@ -33,7 +39,10 @@ export class CompanyDto {
   @IsUrl()
   website?: string;
 
-  @ApiProperty({ example: 'Industrial scrap recycling company', required: false })
+  @ApiProperty({
+    example: 'Industrial scrap recycling company',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;

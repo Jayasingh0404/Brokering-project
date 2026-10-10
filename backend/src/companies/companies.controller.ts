@@ -20,7 +20,10 @@ export class CompaniesController {
 
   @Post()
   @ApiOperation({ summary: 'Create or update company profile' })
-  createOrUpdateCompany(@GetUser('id') userId: string, @Body() companyDto: CompanyDto) {
+  createOrUpdateCompany(
+    @GetUser('id') userId: string,
+    @Body() companyDto: CompanyDto,
+  ) {
     return this.companiesService.createOrUpdateCompany(userId, companyDto);
   }
 }

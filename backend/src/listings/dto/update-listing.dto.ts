@@ -1,4 +1,11 @@
-import { IsOptional, IsString, IsNumber, IsArray, IsEnum, Min } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsArray,
+  IsEnum,
+  Min,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ListingStatus } from '@prisma/client';
 
@@ -8,7 +15,10 @@ export class UpdateListingDto {
   @IsString()
   title?: string;
 
-  @ApiProperty({ example: 'Clean, sorted PET bottles ready for recycling.', required: false })
+  @ApiProperty({
+    example: 'Clean, sorted PET bottles ready for recycling.',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;
@@ -45,7 +55,11 @@ export class UpdateListingDto {
   @IsEnum(ListingStatus)
   status?: ListingStatus;
 
-  @ApiProperty({ example: ['https://example.com/image1.jpg'], type: [String], required: false })
+  @ApiProperty({
+    example: ['https://example.com/image1.jpg'],
+    type: [String],
+    required: false,
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

@@ -22,19 +22,28 @@ export class UsersController {
 
   @Put('profile')
   @ApiOperation({ summary: 'Update user profile info' })
-  updateProfile(@GetUser('id') userId: string, @Body() updateProfileDto: UpdateProfileDto) {
+  updateProfile(
+    @GetUser('id') userId: string,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
     return this.usersService.updateProfile(userId, updateProfileDto);
   }
 
   @Put('profile/change-password')
   @ApiOperation({ summary: 'Change user password' })
-  changePassword(@GetUser('id') userId: string, @Body() changePasswordDto: ChangePasswordDto) {
+  changePassword(
+    @GetUser('id') userId: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
     return this.usersService.changePassword(userId, changePasswordDto);
   }
 
   @Put('profile/preferences')
   @ApiOperation({ summary: 'Update notification preferences' })
-  updatePreferences(@GetUser('id') userId: string, @Body() updatePreferencesDto: UpdatePreferencesDto) {
+  updatePreferences(
+    @GetUser('id') userId: string,
+    @Body() updatePreferencesDto: UpdatePreferencesDto,
+  ) {
     return this.usersService.updatePreferences(userId, updatePreferencesDto);
   }
 

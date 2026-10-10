@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
@@ -56,7 +60,10 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    const isPasswordValid = await argon2.verify(user.password, changePasswordDto.oldPassword);
+    const isPasswordValid = await argon2.verify(
+      user.password,
+      changePasswordDto.oldPassword,
+    );
     if (!isPasswordValid) {
       throw new BadRequestException('Incorrect current password');
     }
@@ -70,7 +77,10 @@ export class UsersService {
     return { message: 'Password updated successfully' };
   }
 
-  async updatePreferences(userId: string, updatePreferencesDto: UpdatePreferencesDto) {
+  async updatePreferences(
+    userId: string,
+    updatePreferencesDto: UpdatePreferencesDto,
+  ) {
     return this.prisma.user.update({
       where: { id: userId },
       data: updatePreferencesDto,

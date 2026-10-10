@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsArray, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsArray,
+  Min,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateListingDto {
@@ -37,7 +44,11 @@ export class CreateListingDto {
   @IsString()
   categoryId: string;
 
-  @ApiProperty({ example: ['https://example.com/image1.jpg'], type: [String], required: false })
+  @ApiProperty({
+    example: ['https://example.com/image1.jpg'],
+    type: [String],
+    required: false,
+  })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })

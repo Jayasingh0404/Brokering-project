@@ -1,0 +1,53 @@
+# Render Blueprint Specification
+# Deploy full stack: PostgreSQL DB, NestJS Backend, Next.js Frontend
+version: "1"
+
+databases:
+  - name: waste-marketplace-db
+    databaseName: waste_brokering
+    user: postgres
+    plan: free
+    region: oregon
+
+services:
+  # Backend NestJS API
+  - type: web
+    name: waste-brokering-api
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma db push --skip-generate && npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: waste-marketplace-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+
+  # Frontend Next.js Web App
+  - type: web
+    name: waste-brokering-frontend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: waste-brokering-api
+          property: host
+          transformation: https://{host}/api/v1

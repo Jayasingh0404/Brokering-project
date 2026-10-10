@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { UpdateListingDto } from './dto/update-listing.dto';
@@ -18,7 +22,9 @@ export class ListingsService {
       throw new ForbiddenException('Only sellers can create listings');
     }
     if (!user.company) {
-      throw new ForbiddenException('Please setup your company profile first before listing');
+      throw new ForbiddenException(
+        'Please setup your company profile first before listing',
+      );
     }
 
     const { images, categoryId, ...listingData } = createListingDto;
@@ -137,7 +143,11 @@ export class ListingsService {
     });
   }
 
-  async update(sellerId: string, id: string, updateListingDto: UpdateListingDto) {
+  async update(
+    sellerId: string,
+    id: string,
+    updateListingDto: UpdateListingDto,
+  ) {
     const listing = await this.prisma.listing.findUnique({
       where: { id },
     });
@@ -199,8 +209,12 @@ export class ListingsService {
     });
 
     const total = myListings.length;
-    const active = myListings.filter((l) => l.status === ListingStatus.ACTIVE).length;
-    const pending = myListings.filter((l) => l.status === ListingStatus.PENDING).length;
+    const active = myListings.filter(
+      (l) => l.status === ListingStatus.ACTIVE,
+    ).length;
+    const pending = myListings.filter(
+      (l) => l.status === ListingStatus.PENDING,
+    ).length;
 
     return {
       totalListings: total,

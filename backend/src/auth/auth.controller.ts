@@ -25,6 +25,10 @@ export class AuthController {
   @ApiOperation({ summary: 'Refresh authentication token' })
   async refresh(@Body('refreshToken') refreshToken: string) {
     const payload = await this.authService.verifyToken(refreshToken);
-    return this.authService.generateTokens(payload.sub, payload.email, payload.role);
+    return this.authService.generateTokens(
+      payload.sub,
+      payload.email,
+      payload.role,
+    );
   }
 }

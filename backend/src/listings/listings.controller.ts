@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ListingsService } from './listings.service';
 import { CreateListingDto } from './dto/create-listing.dto';
 import { UpdateListingDto } from './dto/update-listing.dto';
@@ -7,7 +17,12 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Role } from '@prisma/client';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 @ApiTags('Listings')
 @Controller('api/v1/listings')
@@ -28,7 +43,13 @@ export class ListingsController {
     @Query('minPrice') minPrice?: number,
     @Query('maxPrice') maxPrice?: number,
   ) {
-    return this.listingsService.findAll({ search, categoryId, location, minPrice, maxPrice });
+    return this.listingsService.findAll({
+      search,
+      categoryId,
+      location,
+      minPrice,
+      maxPrice,
+    });
   }
 
   @Get('my')
@@ -60,7 +81,10 @@ export class ListingsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SELLER)
   @ApiOperation({ summary: 'Create a new listing (Seller only)' })
-  create(@GetUser('id') sellerId: string, @Body() createListingDto: CreateListingDto) {
+  create(
+    @GetUser('id') sellerId: string,
+    @Body() createListingDto: CreateListingDto,
+  ) {
     return this.listingsService.create(sellerId, createListingDto);
   }
 

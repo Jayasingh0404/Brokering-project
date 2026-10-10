@@ -25,7 +25,9 @@ async function bootstrap() {
   // Setup Swagger API documentation
   const config = new DocumentBuilder()
     .setTitle('Waste Brokering Marketplace API')
-    .setDescription('The API documentation for the waste brokering marketplace MVP')
+    .setDescription(
+      'The API documentation for the waste brokering marketplace MVP',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -35,6 +37,8 @@ async function bootstrap() {
   const port = process.env.PORT || 3001;
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation is available on: http://localhost:${port}/api/docs`);
+  console.log(
+    `Swagger documentation is available on: http://localhost:${port}/api/docs`,
+  );
 }
 bootstrap();
