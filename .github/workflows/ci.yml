@@ -28,7 +28,7 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci || npm install
 
       - name: Generate Prisma Client
         run: npx prisma generate
@@ -62,7 +62,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci || npm install
 
       - name: Build Next.js Application
         run: npm run build

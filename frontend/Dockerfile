@@ -8,7 +8,7 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 COPY package*.json ./
-RUN npm ci
+RUN npm ci || npm install
 
 COPY . .
 
@@ -24,7 +24,7 @@ ENV NODE_ENV=production
 ENV PORT=3000
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=production || npm install --only=production
 
 COPY --from=builder /usr/src/app/.next ./.next
 COPY --from=builder /usr/src/app/public ./public

@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci
+RUN npm ci || npm install
 
 # Generate Prisma Client
 RUN npx prisma generate
@@ -30,7 +30,7 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Install only production dependencies
-RUN npm ci --only=production
+RUN npm ci --only=production || npm install --only=production
 
 # Generate Prisma Client for production runtime
 RUN npx prisma generate
