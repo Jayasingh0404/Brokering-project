@@ -3,11 +3,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
-# Install build dependencies
+# Install native compilation dependencies for argon2 on Alpine
+RUN apk add --no-cache python3 make g++
+
+# Install dependencies
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci || npm install
+RUN npm install
 
 # Generate Prisma Client
 RUN npx prisma generate
@@ -29,11 +32,8 @@ ENV PORT=3001
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Install only production dependencies
-RUN npm ci --only=production || npm install --only=production
-
-# Generate Prisma Client for production runtime
-RUN npx prisma generate
+# Copy compiled node_modules from builder to avoid re-compiling native modules
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 
 # Copy built artifacts from builder
 COPY --from=builder /usr/src/app/dist ./dist
