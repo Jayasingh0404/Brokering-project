@@ -20,6 +20,9 @@ FROM node:20-alpine AS runner
 
 WORKDIR /usr/src/app
 
+# Install openssl for Prisma runtime
+RUN apk add --no-cache openssl libc6-compat
+
 ENV NODE_ENV=production
 ENV PORT=10000
 
@@ -30,4 +33,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate && npm run start:prod"]
+CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then npx prisma db push --skip-generate || true; fi && npm run start:prod"]
