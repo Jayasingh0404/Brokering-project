@@ -44,4 +44,4 @@ COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 3001
 
 # Run migrations if DATABASE_URL is present, then start app
-CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then npx prisma db push --skip-generate || true; fi && node dist/main.js"]
+CMD ["sh", "-c", "if [ -n \"$DATABASE_URL\" ]; then npx prisma db push --skip-generate || true; fi && npm run start:prod"]
