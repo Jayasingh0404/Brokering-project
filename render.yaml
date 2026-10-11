@@ -5,7 +5,7 @@ version: "1"
 databases:
   - name: waste-marketplace-db
     databaseName: waste_brokering
-    user: postgres
+    user: waste_admin
     plan: free
     region: oregon
 
