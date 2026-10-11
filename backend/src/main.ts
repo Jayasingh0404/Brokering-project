@@ -22,6 +22,9 @@ async function bootstrap() {
     }),
   );
 
+  // Set global API prefix to match frontend expectations
+  app.setGlobalPrefix('api/v1');
+
   // Setup Swagger API documentation
   const config = new DocumentBuilder()
     .setTitle('Waste Brokering Marketplace API')
@@ -35,10 +38,10 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || 3001;
-  await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`Application is running on: http://0.0.0.0:${port}`);
   console.log(
-    `Swagger documentation is available on: http://localhost:${port}/api/docs`,
+    `Swagger documentation is available on: http://0.0.0.0:${port}/api/docs`,
   );
 }
 bootstrap();
